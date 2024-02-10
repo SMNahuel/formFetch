@@ -10,7 +10,7 @@ const SQL_CONFIGURATION_DATA =
 	//host: "186.18.137.196", //IP pública del servidor del colegio
 	user: "root",
 	password: "toor",
-	database: "fetchForm",
+	database: "nacho",
 	port: 3306,
 	charset: 'UTF8_GENERAL_CI'
 }

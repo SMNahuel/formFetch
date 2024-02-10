@@ -89,15 +89,43 @@ tabla Productos. Deberá verificar previamente que el dato que va a agregar no e
 ya en la tabla. Al enviarse el formulario, se deberá redirigir a la página realizada en el
 punto 2.
 */
-
 app.post("/producto", async function (req, res) {
   const { cantidad, producto, categoria } = req.body;
-  const insert = await MySQL.realizarQuery(
-    `INSERT INTO productos (cantidad, producto, categoria) VALUES ("${cantidad}", "${producto}", "${categoria}")`
-  );
-  const productos = await MySQL.realizarQuery("SELECT * FROM productos");
 
-    console.log(insert)
-    console.log(productos)
-
+  //Primero verifico que el producto no exista en la base de datos  
+  const productos = await MySQL.realizarQuery(`SELECT * FROM Productos WHERE  Producto = "${producto}" ` )
+  if (productos.length > 0) {
+    console.log("El producto ya existe");
+    //res.send({validar:true})
+  }
+  else{
+    // Inserto el producto
+    const insert = await MySQL.realizarQuery(
+      `INSERT INTO Productos (Cantidad, Producto, Categoria) VALUES ("${3}", "${producto}", "${categoria}")`
+    );
+    const productos = await MySQL.realizarQuery("SELECT * FROM Productos");
+    res.render("productos", {prod: productos} ); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+  }
+ 
 });
+
+app.get("/productosCargados", async function(req,res){
+  const productos = await MySQL.realizarQuery("SELECT * FROM Productos");
+  res.render("productos", {prod: productos} ); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+})
+
+app.delete("/producto/:producto", async function(req, res){
+  const {producto} = req.params
+  
+  await MySQL.realizarQuery(`DELETE FROM productos WHERE productos.producto = "${producto}"`)
+  
+  const productos = await MySQL.realizarQuery("SELECT * FROM Productos");
+  res.redirect("productosCargados"); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+})
+
+
+app.put("/producto", async function(req, res){
+  const {producto, nuevoProducto} = req.body
+  const response = await MySQL.realizarQuery(`UPDATE productos SET producto="${nuevoProducto}" WHERE producto="${producto}"`)
+  console.log(response)
+})

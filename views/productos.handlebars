@@ -1,12 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    {{!--
+
+    Además permitirle al usuario modificar el nombre del producto seleccionado en el select y guardar la modificación en
+    la base de datos.
+    Realizar esta función utilizando fetch.
+    Recordar que al enviar un fetch no se va a ejecutar un cambio de página.
+    Para hacer esto agregue un input para ingresar la modificación y un botón para enviar el fetch.
+
+    --}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script>
+
+        function botonEliminarProducto() {
+            var e = document.getElementById("selectProducto")
+            //Optenemos al option 
+            var value = e.value;
+
+            //Optenemos el valor osea el nombre del producto
+            var producto = e.options[e.selectedIndex].text;
+            e.remove(obtenervalorselect());
+
+            //Eliminamos de la base de datos
+            fetch(`/producto/${producto}`, {
+                method: "DELETE",
+            })
+        }
+
+        function modificarProducto() {
+            var e = document.getElementById("selectProducto")
+            //Optenemos al option 
+            var value = e.value;
+
+            //Optenemos el valor osea el nombre del producto
+            var productoModificar = e.options[e.selectedIndex].text;
+
+            var nuevoNombre = document.getElementById("nuevoNombre").value
+            console.log(nuevoNombre)
+
+            var body = {
+                producto: productoModificar,
+                nuevoProducto: nuevoNombre,
+            }
+
+            fetch("/producto", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            })
+        }
+
+    </script>
 </head>
+
+
 <body>
     <h1>Productos </h1>
-    <select></select>
+    {{!-- <ul>
+        {{#each prod}}
+        <li>{{this.producto}} Categoria: {{this.categoria}} Cantidad: {{this.cantidad}}</li>
+        {{/each}}
+    </ul> --}}
+    <select id="selectProducto">
+        {{#each prod}}
+        <option value={{this.producto}}>{{this.producto}}</option>
+        {{/each}}
+    </select>
+    <button onclick="botonEliminarProducto()">Eliminar</button>
+
+    <input type="text" id="nuevoNombre" />
+    <button onclick="modificarProducto()">Modificar</button>
+
 </body>
+
 </html>
